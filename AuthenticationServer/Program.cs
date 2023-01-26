@@ -1,6 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options => options.AddPolicy("all", policy => policy.AllowAnyOrigin()));
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.UseCors("all");
+app.MapGet("/", () => "Authentication server");
+app.MapControllers();
 
 app.Run();
