@@ -6,16 +6,11 @@ namespace AuthenticationServer.CertificateSupport
     public class CertificateController
     {
         [Route("/certificate/generate")]
-        public object Generate()
+        public object Generate([FromServices] ICertificateProvider certificateProvider)
         {
-            //This code creates a 2048-bit key
-            using (var rsa = RSA.Create(2048))
-            {
-                return new
-                {
-                    certificate = Convert.ToBase64String(rsa.ExportRSAPublicKey()),
-                };
-            }
+            var certificate = certificateProvider.GenerateNew();
+
+            return new { certificate = certificate.PublicKey };
         }
     }
 }
