@@ -6,7 +6,7 @@ namespace AuthenticationServer.Controllers
     public class VerifyController
     {
         [Route("/verify")]
-        public object Verify(string payload, string @return)
+        public object Verify(string payload)
         {
             //This code creates a 2048-bit key
             using (var rsa = RSA.Create(2048))
