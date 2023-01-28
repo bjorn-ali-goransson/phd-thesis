@@ -29,7 +29,7 @@
             </div>
             <div class="card-body">
                 <p><code id="certificate-contents"></code></p>
-                <center><button class="btn btn-primary" id="download-certificate">Download</button></center>
+                <center><a class="btn btn-primary" id="download-certificate">Download</a></center>
             </div>
         </div>
 
@@ -51,6 +51,8 @@
                     document.querySelector('#certificate-contents').innerHTML = result.certificate;
                     document.querySelector('#certificate-card').style.display = '';
                     document.querySelector('#generate-card').style.display = 'none';
+                    document.querySelector('#download-certificate').setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result.certificate));
+                    document.querySelector('#download-certificate').setAttribute('download', `certificate-${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}-.txt`);
                 });
         </script>
     </div>
