@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 
-namespace phd_thesis.Controllers
+namespace AuthenticationServer.Controllers
 {
-    public class CertificateController
+    public class VerifyController
     {
-        [Route("/certificate/generate")]
-        public object Generate()
+        [Route("/verify")]
+        public object Verify(string payload, string @return)
         {
             //This code creates a 2048-bit key
             using (var rsa = RSA.Create(2048))
