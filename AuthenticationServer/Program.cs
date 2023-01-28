@@ -9,5 +9,6 @@ var app = builder.Build();
 app.UseCors("all");
 app.MapControllers();
 app.MapRazorPages();
+app.MapGet("/", async context => context.Response.Redirect("/Generate"));
 
 app.Run();
