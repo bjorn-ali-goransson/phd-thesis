@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 
-namespace AuthenticationServer.Controllers
+namespace AuthenticationServer.CertificateSupport
 {
     public class CertificateController
     {
