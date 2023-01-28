@@ -1,0 +1,44 @@
+﻿@page
+
+@model AuthenticationServer.GenerateCertificateModel
+
+@{
+    Layout = "_Layout.cshtml";
+    ViewData["Title"] = "Create certificate";
+}
+
+<div class="container mt-5" style="max-width: 18rem;">
+
+    <div class="card mb-5" id="certificate-card" style="display: none;">
+        <div class="card-header">
+            Your certificate is ready
+        </div>
+        <div class="card-body">
+            <p><code id="certificate-contents"></code></p>
+            <center><a class="btn btn-primary" id="download-certificate">Download</a></center>
+        </div>
+    </div>
+
+    <div class="card" id="generate-card">
+        <div class="card-header">
+            Create certificate
+        </div>
+        <div class="card-body">
+            <p class="card-text">Please save your key in a secure location.</p>
+            <center><button class="btn btn-primary" id="generate-certificate">Generate new certificate</button></center>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('#generate-certificate')
+            .addEventListener('click', async event => {
+                const response = await fetch('/certificate/generate');
+                const result = await response.json();
+                document.querySelector('#certificate-contents').innerHTML = result.certificate;
+                document.querySelector('#certificate-card').style.display = '';
+                document.querySelector('#generate-card').style.display = 'none';
+                document.querySelector('#download-certificate').setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result.certificate));
+                document.querySelector('#download-certificate').setAttribute('download', `certificate-${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}-.txt`);
+            });
+    </script>
+</div>
