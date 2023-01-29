@@ -31,7 +31,9 @@ namespace AuthenticationServer.Pages
                     return Content("Certificate not found");
                 }
 
-                return Redirect(@return);
+                var message = Encoding.UTF8.GetString(rsa.EncryptValue(Encoding.UTF8.GetBytes("Login")));
+
+                return Redirect($"{@return}?message={message}");
             }
             catch(Exception exception)
             {

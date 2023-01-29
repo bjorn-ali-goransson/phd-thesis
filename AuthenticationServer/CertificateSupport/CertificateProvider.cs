@@ -3,36 +3,19 @@ using System.Text;
 
 namespace AuthenticationServer.CertificateSupport
 {
-    public class CertificateProvider : ICertificateProvider
+    public class CertificateProvider : ICertificateProvider, IDisposable
     {
-        IDictionary<string, Certificate> Certificates { get; } = new Dictionary<string, Certificate>();
+        //This code creates a 2048-bit key
+        RSA RSA { get; } = RSA.Create(2048);
 
-        public Certificate GenerateNew()
+        public string GenerateNew(string key)
         {
-            //This code creates a 2048-bit key
-            using var rsa = RSA.Create(2048);
-            
-            var certificate = new Certificate(Convert.ToBase64String(rsa.ExportRSAPublicKey()), Convert.ToBase64String(rsa.ExportRSAPrivateKey()));
-
-            Certificates[certificate.PublicKey] = certificate;
-
-            return certificate;
+            return Convert.ToBase64String(RSA.Encrypt(Encoding.UTF8.GetBytes(key), RSAEncryptionPadding.OaepSHA512));
         }
 
-        public RSA? Get(string publicKey)
+        public void Dispose()
         {
-            if (!Certificates.ContainsKey(publicKey))
-            {
-                return null;
-            }
-
-            var rsa = RSA.Create(2048);
-            var certificate = Certificates[publicKey];
-
-            rsa.ImportRSAPublicKey(Convert.FromBase64String(certificate.PublicKey), out var _);
-            rsa.ImportRSAPrivateKey(Convert.FromBase64String(certificate.PrivateKey), out var _);
-
-            return rsa;
+            RSA.Dispose();
         }
     }
 }

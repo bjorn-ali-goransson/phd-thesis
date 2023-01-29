@@ -4,7 +4,7 @@ namespace AuthenticationServer.CertificateSupport
 {
     public interface ICertificateProvider
     {
-        Certificate GenerateNew();
-        RSA? Get(string publicKey);
+        string GenerateNew(string key);
+        bool Verify(string key);
     }
 }
