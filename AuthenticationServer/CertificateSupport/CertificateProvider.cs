@@ -6,16 +6,26 @@ namespace AuthenticationServer.CertificateSupport
     public class CertificateProvider : ICertificateProvider, IDisposable
     {
         //This code creates a 2048-bit key
-        RSA RSA { get; } = RSA.Create(2048);
+        RSA Certificate { get; } = RSA.Create(2048);
 
-        public string GenerateNew(string key)
+        public string GetPublicKey()
         {
-            return Convert.ToBase64String(RSA.Encrypt(Encoding.UTF8.GetBytes(key), RSAEncryptionPadding.OaepSHA512));
+            return Convert.ToBase64String(Certificate.ExportRSAPublicKey());
+        }
+
+        public string Encrypt(string value)
+        {
+            return Convert.ToBase64String(Certificate.Encrypt(Encoding.UTF8.GetBytes(value), RSAEncryptionPadding.OaepSHA512));
+        }
+
+        public string Decrypt(string value)
+        {
+            return Encoding.UTF8.GetString(Certificate.Decrypt(Convert.FromBase64String(value), RSAEncryptionPadding.OaepSHA512));
         }
 
         public void Dispose()
         {
-            RSA.Dispose();
+            Certificate.Dispose();
         }
     }
 }

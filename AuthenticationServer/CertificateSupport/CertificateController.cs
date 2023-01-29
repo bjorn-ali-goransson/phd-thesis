@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace AuthenticationServer.CertificateSupport
 {
@@ -8,9 +9,9 @@ namespace AuthenticationServer.CertificateSupport
         [Route("/certificate/generate")]
         public object Generate([FromServices] ICertificateProvider certificateProvider)
         {
-            var certificate = certificateProvider.GenerateNew();
+            var certificate = certificateProvider.Encrypt(JsonSerializer.Serialize(new { type = "userkey", date = DateTime.Now }));
 
-            return new { certificate = certificate.PublicKey };
+            return new { certificate };
         }
     }
 }

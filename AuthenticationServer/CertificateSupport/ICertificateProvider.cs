@@ -4,7 +4,8 @@ namespace AuthenticationServer.CertificateSupport
 {
     public interface ICertificateProvider
     {
-        string GenerateNew(string key);
-        bool Verify(string key);
+        string GetPublicKey();
+        string Encrypt(string value);
+        string Decrypt(string value);
     }
 }

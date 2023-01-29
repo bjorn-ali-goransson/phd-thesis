@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace AuthenticationServer.Pages
 {
@@ -13,10 +14,11 @@ namespace AuthenticationServer.Pages
 
         }
 
-        public IActionResult OnPost(IFormFile certificate, string @return, [FromServices] ICertificateProvider certificateProvider, [FromServices] ILogger<LoginModel> logger)
+        public IActionResult OnPost(IFormFile certificate, string callback, [FromServices] ICertificateProvider certificateProvider, [FromServices] ILogger<LoginModel> logger)
         {
             if (certificate == null)
             {
+                logger.LogError("No certificate found");
                 return Content("No certificate found");
             }
 
@@ -24,21 +26,20 @@ namespace AuthenticationServer.Pages
             {
                 using var stream = certificate.OpenReadStream();
                 
-                using var rsa = certificateProvider.Get(new StreamReader(stream).ReadToEnd());
+                var key = JsonDocument.Parse(certificateProvider.Decrypt(new StreamReader(stream).ReadToEnd()));
 
-                if(rsa == null)
+                if (key.RootElement.GetProperty("type").ToString() != "userkey")
                 {
-                    return Content("Certificate not found");
+                    logger.LogError("Invalid key");
+                    return Content("Invalid key");
                 }
 
-                var message = Encoding.UTF8.GetString(rsa.EncryptValue(Encoding.UTF8.GetBytes("Login")));
-
-                return Redirect($"{@return}?message={message}");
+                return Redirect(callback);
             }
             catch(Exception exception)
             {
-                logger.LogError(exception, "Invalid certificate");
-                return Content("Invalid certificate");
+                logger.LogError(exception, "Invalid key");
+                return Content("Invalid key");
             }
         }
     }
